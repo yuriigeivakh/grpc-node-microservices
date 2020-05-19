@@ -5,7 +5,9 @@ const service = require('../server/protos/greet_grpc_pb');
 
 function greet(call, callback) {
     const greeting = new greets.GreetResponse();
-    greeting.setResult("hello" + call.request.getGreeting().getFirstname());
+    const firstName = call.request.getGreeting().getFirstname();
+    const lastName = call.request.getGreeting().getLastname();
+    greeting.setResult(`hello ${firstName} ${lastName}`);
 
     callback(null, greeting);
 }
