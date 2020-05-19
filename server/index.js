@@ -15,6 +15,23 @@ function greet(call, callback) {
     callback(null, greeting);
 }
 
+function greetManyTimes(call, callback) {
+    const firstName = call.request.getGreeting().getFirstname();
+    let count = 0;
+    let intervalID = setInterval(() => {
+        const greeting = new greets.GreetManyTimesResponse();
+        greeting.setResult(firstName);
+        call.write(greeting);
+        call.end();
+        if (++count > 9) {
+            clearInterval(intervalID);
+            call.end();
+        }
+    }, 1000);
+
+    callback(null, greeting);
+}
+
 function sum(call, callback) {
     const sumResponse = new calculator.SumResponse();
     sumResponse.setSumresult(call.request.getFirstnumber() + call.request.getSecondnumber());
@@ -25,7 +42,7 @@ function sum(call, callback) {
 function Main() {
     const server = new grpc.Server();
 
-    server.addService(greetsService.GreetServiceService, { greet });
+    server.addService(greetsService.GreetServiceService, { greet, greetManyTimes });
     server.addService(calculatorService.SumServiceService, { sum });
     server.bind("127.0.0.1:50051", grpc.ServerCredentials.createInsecure());
     server.start();

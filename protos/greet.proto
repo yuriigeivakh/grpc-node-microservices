@@ -3,7 +3,10 @@ syntax = "proto3";
 package greet;
 
 service GreetService {
+    // unary API
     rpc Greet (GreetRequest) returns (GreetResponse) {};
+    // streaming API
+    rpc GreetManyTimes (GreetRequest) returns (stream GreetResponse) {};
 }
 
 message Greeting {
