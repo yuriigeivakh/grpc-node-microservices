@@ -1,10 +1,13 @@
 const grpc = require('grpc');
 
-const service = require('../server/protos/greet_grpc_pb');
+const greetsService = require('../server/protos/greet_grpc_pb');
 const greets = require('../server/protos/greet_pb');
 
-function Main() {
-    const client = new service.GreetServiceClient('localhost:50051', grpc.credentials.createInsecure())
+const calculatorService = require('../server/protos/calculator_grpc_pb');
+const calculator = require('../server/protos/calculator_pb');
+
+function callGreetings() {
+    const client = new greetsService.GreetServiceClient('localhost:50051', grpc.credentials.createInsecure());
 
     const request = new greets.GreetRequest();
     const greeting = new greets.Greeting();
@@ -18,6 +21,25 @@ function Main() {
         }
         console.log('res', response.getResult());
     });
+}
+
+function callSum() {
+    const client = new calculatorService.SumServiceClient('localhost:50051', grpc.credentials.createInsecure());
+    const sumRequest = new calculator.SumRequest();
+    sumRequest.setFirstnumber(10);
+    sumRequest.setSecondnumber(15);
+    client.sum(sumRequest, (err, response) => {
+        if (err) {
+            console.log(err);
+        }
+        console.log('res', response.getSumresult());
+    });
+    
+}
+
+function Main() {
+    callGreetings();
+    callSum();
 }
 
 Main();
